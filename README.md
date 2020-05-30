@@ -1,2 +1,6 @@
 # userme-demo-ui
-Example project showing Userme API usage for identity/token management in a real application. See more at http://github.com/stutzlab/userme
+Example application that uses Userme for account operations (registration, password reset, social login etc)
+
+Backend services for this demo is at http://github.com/stutzlab/userme-demo-api
+
+See more at http://github.com/stutzlab/userme
