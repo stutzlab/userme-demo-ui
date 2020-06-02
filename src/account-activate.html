@@ -1,0 +1,53 @@
+<html>
+
+<head>
+    <title>Userme Demo - TATLM - New Account</title>
+    <link rel="icon" href="data:;base64,=">
+    <script src="/env.js"></script>
+    <script src="/auth.js"></script>
+</head>
+
+<body>
+    <h2>TATLM (The Awesome TODO List Manager)</h2>
+
+    <h3>Account Activation</h3>
+    <h5 id="message"></h5>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('t');
+
+        window.onload = async () => {
+            const response = await fetch(USERME_API_URL + '/token',
+                {
+                    method: 'GET',
+                    headers: { 'Authorization': 'Bearer ' + token }
+                }
+            );
+            if (response.status != 200) {
+                document.getElementById("message").innerHTML = "Invalid activation token"
+                return
+            }
+
+            const responseJson = await response.json();
+            alert(JSON.stringify(responseJson))
+
+            const response1 = await fetch(USERME_API_URL + '/user/' + responseJson.sub + '/activate',
+                {
+                    method: 'POST',
+                    headers: { 'Authorization': 'Bearer ' + token }
+                }
+            );
+            if (response1.status == 202) {
+                document.getElementById("message").innerHTML = "Account activated successfully. <a href='/login.html'>Login Now!</a>"
+            } else if(response1.status == 450) {
+                document.getElementById("message").innerHTML = "Invalid activation token"
+            } else if(response1.status == 455) {
+                document.getElementById("message").innerHTML = "Account already activated"
+            } else if(response1.status == 460) {
+                document.getElementById("message").innerHTML = "Account disabled"
+            } else {
+                document.getElementById("message").innerHTML = "Server error"
+            }
+        }
+    </script>
+</body>

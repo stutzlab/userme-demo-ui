@@ -1,0 +1,67 @@
+<html>
+
+<head>
+    <title>Userme Demo - TATLM - TODO list</title>
+    <link rel="icon" href="data:;base64,=">
+    <script src="/env.js"></script>
+    <script src="/auth.js"></script>
+</head>
+
+<body>
+    <h2>TATLM (The Awesome TODO List Manager)</h2>
+
+    <h3 id="title">New TODO</h3>
+
+    <form action="#">
+        <input type="text" id="todoTitle" /><br/>
+        <button onclick="newTODOClick()">Save</button>
+    </form>
+
+    <p>
+        <div id="loggedInUser"></div>
+    </p>
+
+    <script>
+        newTODOClick = async () => {
+            console.log("TODO saving")
+
+            token = getToken()
+            if(token==null) {
+                window.location.href="/"
+                return
+            }
+
+            const todoTitle = document.getElementById("todoTitle").value
+            const response = await fetch(DEMO_API_URL + '/user/' + token.email + '/todo',
+                {
+                    method: 'POST',
+                    body: JSON.stringify({ 'title': todoTitle }),
+                    headers: { 'Authorization': 'Bearer ' + token.accessToken }
+                }
+            );
+
+            if (response.status == 201) {
+                console.log("TODO saved")
+                window.location.href="/todo-list.html?email=" + token.email
+            } else if(response.status >= 400 && response.status <500) {
+                alert("Unauthorized")
+            } else {
+                alert("Server error")
+            }
+        }
+        window.onload = () => {
+            keepTokenRefreshed()
+            token = getToken()
+            if(token==null) {
+                window.location.href="/login.html"
+            } else {
+                document.getElementById("loggedInUser").innerHTML = "Logged user: " + token.name + " (" + token.email + ")"
+            }
+        }
+    </script>
+
+    <p><a href="/">Go to home</a></p>
+
+</body>
+
+</html>

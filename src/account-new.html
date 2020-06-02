@@ -1,0 +1,55 @@
+<html>
+
+<head>
+    <title>Userme Demo - TATLM - New Account</title>
+    <link rel="icon" href="data:;base64,=">
+    <script src="/env.js"></script>
+    <script src="/auth.js"></script>
+</head>
+
+<body>
+    <h2>TATLM (The Awesome TODO List Manager)</h2>
+
+    <h3>New Account</h3>
+
+    <form action="#">
+        <label for="name">Name: </label><input type="text" id="name" /><br />
+        <label for="email">Email: </label><input type="text" id="email" /><br />
+        <label for="password">Password: </label><input type="password" id="password" /><br />
+        <button onclick="createNewAccount()" style="margin:1em"><b>Create Account</b></button>
+    </form>
+
+    <script>
+        createNewAccount = async () => {
+            let name = document.getElementById("name").value
+            let email = document.getElementById("email").value
+            let password = document.getElementById("password").value
+
+            const response = await fetch(USERME_API_URL + '/user/' + email,
+                {
+                    method: 'PUT',
+                    body: JSON.stringify({ 'name': name, 'password': password }),
+                    headers: { 'Content-Type': 'application/json' }
+                }
+            );
+
+            if (response.status == 250) {
+                alert("Account created. Check your email for an account activation link")
+                window.location.href="/"
+            } else if(response.status == 201) {
+                alert("Account created and activated successfully")
+                window.location.href="/"
+            } else if(response.status == 450) {
+                alert("Invalid name")
+            } else if(response.status == 455) {
+                alert("Invalid email")
+            } else if(response.status == 460) {
+                alert("Invalid password")
+            } else if(response.status == 465) {
+                alert("Email already exists")
+            } else {
+                alert("Server error")
+            }
+        }
+    </script>
+</body>

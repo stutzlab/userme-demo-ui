@@ -1,72 +1,41 @@
 <html>
 
-<script>
-    // window.fbAsyncInit = function () {
-    //     FB.init({
-    //         appId: '{your-app-id}',
-    //         cookie: true,
-    //         xfbml: true,
-    //         version: '{api-version}'
-    //     });
-    //     FB.AppEvents.logPageView();
-    // };
-
-    // (function (d, s, id) {
-    //     var js, fjs = d.getElementsByTagName(s)[0];
-    //     if (d.getElementById(id)) { return; }
-    //     js = d.createElement(s); js.id = id;
-    //     js.src = "https://connect.facebook.net/en_US/sdk.js";
-    //     fjs.parentNode.insertBefore(js, fjs);
-    // }(document, 'script', 'facebook-jssdk'));
-
-
-    // FB.getLoginStatus(function (response) {
-    //     // statusChangeCallback(response);
-    //     alert(response.status)
-    //     // {
-    //     //     status: 'connected',
-    //     //     authResponse: {
-    //     //         accessToken: '...',
-    //     //         expiresIn:'...',
-    //     //         signedRequest:'...',
-    //     //         userID:'...'
-    //     //     }
-    //     // }
-    // });
-
-    function checkLoginState() {
-        FB.getLoginStatus(function (response) {
-            // statusChangeCallback(response);
-            alert(response.status)
-            alert(response.authResponse.accessToken)
-        });
-    }
-
-    // FB.login(function(response) {
-    //     if (response.status === 'connected') {
-    //         // Logged into your webpage and Facebook.
-    //     } else {
-    //         // The person is not logged into your webpage or we are unable to tell. 
-    //     } 
-    // }, {scope: 'public_profile,email'});
-
-</script>
+<head>
+    <title>Userme Demo - TATLM - Welcome</title>
+    <link rel="icon" href="data:;base64,=">
+    <script src="/env.js"></script>
+    <script src="/auth.js"></script>
+</head>
 
 <body>
+    <h2>Welcome to TATLM (The Awesome TODO List Manager)</h2>
+
     <div id="fb-root"></div>
     <script async defer crossorigin="anonymous"
         src="https://connect.facebook.net/pt_BR/sdk.js#xfbml=1&version=v7.0&appId=884133135440365&autoLogAppEvents=1"></script>
 
-    <h2>Welcome to my site!</h2>
-    <p>You can login with a email/password or use your social accounts to login</p>
-    <h3>Login with email/password</h3>
-    <a href="http://">Create new account</a>
+    <h4 id="login">
+        <a href="/login.html">Login</a><br/>
+        <a href="/account-new.html">Create New Account</a>
+    </h4>
 
-    <h3>Login with Facebook</h3>
-    <fb:login-button scope="public_profile,email" onlogin="checkLoginState();">
-    </fb:login-button>
+    <p>
+        <div id="loggedInUser"></div>
+    </p>
 
-    <!-- <div class="fb-login-button" data-size="large" data-button-type="login_with" data-layout="rounded" data-auto-logout-link="false" data-use-continue-as="false" data-width=""></div> -->
+    <script>
+        function logout() {
+            removeToken()
+        }
+        window.onload = () => {
+            token = getToken()
+            if(token!=null) {
+                document.getElementById("login").innerHTML = "<a href='/todo-list.html?email=" + token.email + "'>List TODOs</a>"
+                document.getElementById("loggedInUser").innerHTML = "Logged user: " + token.name + " (" + token.email + ") <br/><a href='/index.html' onclick='logout()'>Logout</a>"
+            }
+        }
+    </script>
+
 </body>
 
 </html>

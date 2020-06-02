@@ -1,0 +1,86 @@
+<html>
+
+<head>
+    <title>Userme Demo - TATLM - TODO list</title>
+    <link rel="icon" href="data:;base64,=">
+    <script src="/env.js"></script>
+    <script src="/auth.js"></script>
+</head>
+
+<body>
+    <h2>TATLM (The Awesome TODO List Manager)</h2>
+    
+    <h3 id="title"></h3>
+
+    <ul id="list">
+    </ul>
+
+    <br />
+    <a href="/todo-new.html">New TODO</a>
+
+    <p>
+        <div id="loggedInUser"></div>
+    </p>
+
+    <script>
+        getTODOs = async (email) => {
+            token = getToken()
+            if (token == null) {
+                window.location.href = "/"
+            }
+            const urlParams = new URLSearchParams(window.location.search);
+            const email1 = urlParams.get('email');
+            if (email1 == null) {
+                alert("'email' query param is required for this page")
+            }
+            const response = await fetch(DEMO_API_URL + '/user/' + email1 + '/todo',
+                {
+                    method: 'GET',
+                    headers: { 'Authorization': 'Bearer ' + token.accessToken }
+                }
+            );
+
+            if (response.status == 401) {
+                window.location.href = "/login.html"
+                return null
+            } else if (response.status == 403) {
+                alert("User not authorized to access this data")
+                return null
+            } else if (response.status == 200) {
+                r = await response.text()
+                return JSON.parse(r)
+            } else {
+                alert("Server error " + response.status)
+                return null
+            }
+        }
+
+        window.onload = async () => {
+            keepTokenRefreshed()
+            token = getToken()
+            if (token == null) {
+                window.location.href = "/login.html"
+            } else {
+                document.getElementById("title").innerHTML = "What you have TODO:"
+                document.getElementById("loggedInUser").innerHTML = "Logged user: " + token.name + " (" + token.email + ")"
+
+                let todoList = ""
+                const todos = await getTODOs(token.email)
+                if (todos != null && todos!='') {
+                    for (var i = 0; i < todos.length; i++) {
+                        t = todos[i]
+                        todoList += "<li>" + t.title + "</li>"
+                    }
+                } else {
+                    todoList = "<b>No TODO items found</b>"
+                }
+                document.getElementById("list").innerHTML = todoList
+            }
+        }
+    </script>
+
+    <p><a href="/">Go to home</a></p>
+
+</body>
+
+</html>
