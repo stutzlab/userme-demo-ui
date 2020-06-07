@@ -9,7 +9,7 @@
 
 <body>
     <h2>TATLM (The Awesome TODO List Manager)</h2>
-    
+
     <h3 id="title"></h3>
 
     <ul id="list">
@@ -19,7 +19,7 @@
     <a href="/todo-new.html">New TODO</a>
 
     <p>
-        <div id="loggedInUser"></div>
+    <div id="loggedInUser"></div>
     </p>
 
     <script>
@@ -33,25 +33,30 @@
             if (email1 == null) {
                 alert("'email' query param is required for this page")
             }
-            const response = await fetch(DEMO_API_URL + '/user/' + email1 + '/todo',
-                {
-                    method: 'GET',
-                    headers: { 'Authorization': 'Bearer ' + token.accessToken }
-                }
-            );
+            try {
+                const response = await fetch(DEMO_API_URL + '/user/' + email1 + '/todo',
+                    {
+                        method: 'GET',
+                        headers: { 'Authorization': 'Bearer ' + token.accessToken }
+                    }
+                );
 
-            if (response.status == 401) {
-                window.location.href = "/login.html"
-                return null
-            } else if (response.status == 403) {
-                alert("User not authorized to access this data")
-                return null
-            } else if (response.status == 200) {
-                r = await response.text()
-                return JSON.parse(r)
-            } else {
-                alert("Server error " + response.status)
-                return null
+                if (response.status == 401) {
+                    window.location.href = "/login.html"
+                    return null
+                } else if (response.status == 403) {
+                    alert("User not authorized to access this data")
+                    return null
+                } else if (response.status == 200) {
+                    r = await response.text()
+                    return JSON.parse(r)
+                } else {
+                    alert("Server error " + response.status)
+                    return null
+                }
+            } catch (err) {
+                alert("Server error " + err)
+                return
             }
         }
 
@@ -66,7 +71,7 @@
 
                 let todoList = ""
                 const todos = await getTODOs(token.email)
-                if (todos != null && todos!='') {
+                if (todos != null && todos != '') {
                     for (var i = 0; i < todos.length; i++) {
                         t = todos[i]
                         todoList += "<li>" + t.title + "</li>"

@@ -10,7 +10,25 @@ function getToken() {
     return null
 }
 
-createToken = async(email, password) => {
+createTokenFacebook = async(facebookToken) => {
+    const response = await fetch(USERME_API_URL + '/token',
+        {
+            method: 'POST',
+            body: JSON.stringify({ 'facebookToken': facebookToken }),
+            headers: { 'Content-Type': 'application/json' }
+        }
+    );
+    if (response.status != 200) {
+        return "Invalid Facebook token"
+    } else {
+        const responseJson = await response.json();
+        localStorage.setItem('token', JSON.stringify(responseJson));
+        return null
+    }
+}
+
+
+createTokenPassword = async(email, password) => {
     const response = await fetch(USERME_API_URL + '/token',
         {
             method: 'POST',

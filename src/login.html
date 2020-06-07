@@ -19,7 +19,7 @@
     <form action="#">
         <label for="email">E-mail:</label><input id="email" type="text" /><br/>
         <label for="password">Password:</label><input id="password" type="password" /><br/>
-        <button onclick="loginClick()">Login</button>
+        <button onclick="loginPasswordClick()">Login</button>
     </form>
     <a href="/password-reset.html">Password Reset</a>
     <a href="/account-new.html">Create New Account</a>
@@ -27,12 +27,37 @@
     <br />
     <br />
     <h3>Login with Facebook</h3>
-    <fb:login-button scope="public_profile,email" onlogin="checkLoginState();">
+    <fb:login-button size="medium" scope="public_profile,email" onlogin="checkFBLogin()">
     </fb:login-button>
 
     <!-- <div class="fb-login-button" data-size="large" data-button-type="login_with" data-layout="rounded" data-auto-logout-link="false" data-use-continue-as="false" data-width=""></div> -->
 
     <script>
+        function checkFBLogin() {
+            FB.getLoginStatus(async (response) => {
+                if(response.status == "connected") {
+                    err = await createTokenFacebook(response.authResponse.accessToken)
+                    const token = getToken()
+                    if(err==null && token!=null) {
+                        window.location.href = "/"
+                    } else {
+                        alert(err)
+                    }
+                }
+            });
+        }
+
+        const loginPasswordClick = async () => {
+            let email = document.getElementById("email").value
+            let password = document.getElementById("password").value
+            err = await createTokenPassword(email, password)
+            const token = getToken()
+            if(err==null && token!=null) {
+                window.location.href = "/"
+            } else {
+                alert(err)
+            }
+        }
         // window.fbAsyncInit = function () {
         //     FB.init({
         //         appId: '{your-app-id}',
@@ -73,25 +98,6 @@
         //         // The person is not logged into your webpage or we are unable to tell. 
         //     } 
         // }, {scope: 'public_profile,email'});
-        function checkLoginState() {
-            FB.getLoginStatus(function (response) {
-                // statusChangeCallback(response);
-                alert(response.status)
-                alert(response.authResponse.accessToken)
-            });
-        }
-
-        const loginClick = async () => {
-            let email = document.getElementById("email").value
-            let password = document.getElementById("password").value
-            err = await createToken(email, password)
-            const token = getToken()
-            if(err==null && token!=null) {
-                window.location.href = "/"
-            } else {
-                alert(err)
-            }
-        }
     </script>
 
     <p><a href="/">Go to home</a></p>
