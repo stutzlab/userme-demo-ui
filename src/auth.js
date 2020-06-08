@@ -10,6 +10,23 @@ function getToken() {
     return null
 }
 
+createTokenGoogle = async(googleToken) => {
+    const response = await fetch(USERME_API_URL + '/token',
+        {
+            method: 'POST',
+            body: JSON.stringify({ 'googleToken': googleToken }),
+            headers: { 'Content-Type': 'application/json' }
+        }
+    );
+    if (response.status != 200) {
+        return "Invalid Google token"
+    } else {
+        const responseJson = await response.json();
+        localStorage.setItem('token', JSON.stringify(responseJson));
+        return null
+    }
+}
+
 createTokenFacebook = async(facebookToken) => {
     const response = await fetch(USERME_API_URL + '/token',
         {
@@ -26,7 +43,6 @@ createTokenFacebook = async(facebookToken) => {
         return null
     }
 }
-
 
 createTokenPassword = async(email, password) => {
     const response = await fetch(USERME_API_URL + '/token',
@@ -65,12 +81,28 @@ refreshToken = async ()=> {
 }
 
 function keepTokenRefreshed() {
-    window.setInterval(async function() {
-        console.log("Refreshing token")
-        const err = await refreshToken()
-        if(err!=null) {
-            console.log("Error refreshing token. err=" + err)
-        }
-        console.log("Token refreshed successfully")
-    }, 60000)
+    const t = getToken()
+    if(t==null || !t.accessTokenExpiration) {
+        console.log('Could not get token for auto refresh')
+        return
+    }
+    const diff = Date.parse(t.accessTokenExpiration) - new Date().getTime()
+    console.log("Next token refresh scheduled in " + (diff-120000) + "ms")
+    window.setTimeout(doRefresh, Math.max(diff-120000, 0))
 }
+
+async function doRefresh() {
+    console.log("Refreshing token")
+    const err = await refreshToken()
+    if(err!=null) {
+        console.log("Error refreshing token. err=" + err)
+    }
+    console.log("Token refreshed successfully")    
+
+    const t = getToken()
+    const diff = Date.parse(t.accessTokenExpiration) - new Date().getTime()
+    console.log("Next token refresh scheduled in " + (diff-120000) + "ms")
+    window.setTimeout(doRefresh, Math.max(diff-120000, 0))
+}
+
+keepTokenRefreshed()

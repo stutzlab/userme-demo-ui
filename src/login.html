@@ -5,6 +5,10 @@
     <link rel="icon" href="data:;base64,=">
     <script src="/env.js"></script>
     <script src="/auth.js"></script>
+
+    <meta name="google-signin-scope" content="profile email">
+    <meta name="google-signin-client_id" content="339086941381-61h3t55u99n9rt0arqmu655cvs3gk3ol.apps.googleusercontent.com">
+    <script src="https://apis.google.com/js/platform.js" async defer></script>    
 </head>
 
 <body>
@@ -30,9 +34,26 @@
     <fb:login-button size="medium" scope="public_profile,email" onlogin="checkFBLogin()">
     </fb:login-button>
 
-    <!-- <div class="fb-login-button" data-size="large" data-button-type="login_with" data-layout="rounded" data-auto-logout-link="false" data-use-continue-as="false" data-width=""></div> -->
+    <br />
+    <br />
+    <h3>Login with Google</h3>
+    <div class="g-signin2" data-onsuccess="onLoginGoogle" data-theme="dark"></div>
 
     <script>
+        const onLoginGoogle = parei aqui(googleUser) => {
+            console.log("Login with Google")
+            var profile = googleUser.getBasicProfile();
+            var googleToken = googleUser.getAuthResponse().id_token
+            console.log("Google token=" + googleToken)
+            // err = await createTokenGoogle(googleToken)
+            // const token = getToken()
+            // if(err==null && token!=null) {
+            //     window.location.href = "/"
+            // } else {
+            //     alert(err)
+            // }
+        }
+
         function checkFBLogin() {
             FB.getLoginStatus(async (response) => {
                 if(response.status == "connected") {
@@ -58,46 +79,6 @@
                 alert(err)
             }
         }
-        // window.fbAsyncInit = function () {
-        //     FB.init({
-        //         appId: '{your-app-id}',
-        //         cookie: true,
-        //         xfbml: true,
-        //         version: '{api-version}'
-        //     });
-        //     FB.AppEvents.logPageView();
-        // };
-
-        // (function (d, s, id) {
-        //     var js, fjs = d.getElementsByTagName(s)[0];
-        //     if (d.getElementById(id)) { return; }
-        //     js = d.createElement(s); js.id = id;
-        //     js.src = "https://connect.facebook.net/en_US/sdk.js";
-        //     fjs.parentNode.insertBefore(js, fjs);
-        // }(document, 'script', 'facebook-jssdk'));
-
-
-        // FB.getLoginStatus(function (response) {
-        //     // statusChangeCallback(response);
-        //     alert(response.status)
-        //     // {
-        //     //     status: 'connected',
-        //     //     authResponse: {
-        //     //         accessToken: '...',
-        //     //         expiresIn:'...',
-        //     //         signedRequest:'...',
-        //     //         userID:'...'
-        //     //     }
-        //     // }
-        // });
-
-        // FB.login(function(response) {
-        //     if (response.status === 'connected') {
-        //         // Logged into your webpage and Facebook.
-        //     } else {
-        //         // The person is not logged into your webpage or we are unable to tell. 
-        //     } 
-        // }, {scope: 'public_profile,email'});
     </script>
 
     <p><a href="/">Go to home</a></p>

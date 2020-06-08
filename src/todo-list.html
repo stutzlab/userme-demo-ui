@@ -61,7 +61,6 @@
         }
 
         window.onload = async () => {
-            keepTokenRefreshed()
             token = getToken()
             if (token == null) {
                 window.location.href = "/login.html"
