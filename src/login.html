@@ -6,9 +6,7 @@
     <script src="/env.js"></script>
     <script src="/auth.js"></script>
 
-    <meta name="google-signin-scope" content="profile email">
-    <meta name="google-signin-client_id" content="339086941381-61h3t55u99n9rt0arqmu655cvs3gk3ol.apps.googleusercontent.com">
-    <script src="https://apis.google.com/js/platform.js" async defer></script>    
+    <script src="https://apis.google.com/js/platform.js?onload=googleInit" async defer></script>
 </head>
 
 <body>
@@ -31,30 +29,46 @@
     <br />
     <br />
     <h3>Login with Facebook</h3>
-    <fb:login-button size="medium" scope="public_profile,email" onlogin="checkFBLogin()">
-    </fb:login-button>
-
+    <div class="fb-login-button" data-size="medium" data-button-type="login_with" 
+         data-layout="default" data-auto-logout-link="false" data-use-continue-as="false" 
+         data-width="" data-onlogin="checkFBLogin()" data-scope="public_profile,email"></div>
     <br />
     <br />
     <h3>Login with Google</h3>
-    <div class="g-signin2" data-onsuccess="onLoginGoogle" data-theme="dark"></div>
+    <button id="googleButton">Signin with Google</button>
 
     <script>
-        const onLoginGoogle = parei aqui(googleUser) => {
-            console.log("Login with Google")
-            var profile = googleUser.getBasicProfile();
-            var googleToken = googleUser.getAuthResponse().id_token
-            console.log("Google token=" + googleToken)
-            // err = await createTokenGoogle(googleToken)
-            // const token = getToken()
-            // if(err==null && token!=null) {
-            //     window.location.href = "/"
-            // } else {
-            //     alert(err)
-            // }
+        //GOOGLE LOGIN
+        function googleInit() {
+            gapi.load('auth2', async () => {
+                const auth2 = await gapi.auth2.init({
+                    client_id: '339086941381-61h3t55u99n9rt0arqmu655cvs3gk3ol.apps.googleusercontent.com',
+                    fetch_basic_profile: true,
+                    scope: 'profile email'
+                });
+                document.getElementById("googleButton").onclick = async () => {
+                    console.log("Click Google login")
+                    resp = await auth2.grantOfflineAccess({'redirect_uri': 'postmessage', 'approval_prompt': 'force'});
+                    // const auth2 = gapi.auth2.getAuthInstance()
+                    // const googleToken = auth2.currentUser.get().getAuthResponse().id_token
+                    // var profile = googleUser.getBasicProfile();
+                    // var googleToken = googleUser.getAuthResponse().id_token
+                    const googleAuthCode = resp.code
+                    console.log("Google auth code=" + googleAuthCode)
+                    err = await createTokenGoogle(googleAuthCode)
+                    const token = getToken()
+                    if(err==null && token!=null) {
+                        window.location.href = "/"
+                    } else {
+                        alert(err)
+                    }
+                }         
+            });
         }
 
+        //FACEBOOK LOGIN
         function checkFBLogin() {
+            console.log("Check Facebook login")
             FB.getLoginStatus(async (response) => {
                 if(response.status == "connected") {
                     err = await createTokenFacebook(response.authResponse.accessToken)
@@ -68,6 +82,7 @@
             });
         }
 
+        //PASSWORD LOGIN
         const loginPasswordClick = async () => {
             let email = document.getElementById("email").value
             let password = document.getElementById("password").value

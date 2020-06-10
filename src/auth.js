@@ -10,11 +10,11 @@ function getToken() {
     return null
 }
 
-createTokenGoogle = async(googleToken) => {
+createTokenGoogle = async(googleAuthCode) => {
     const response = await fetch(USERME_API_URL + '/token',
         {
             method: 'POST',
-            body: JSON.stringify({ 'googleToken': googleToken }),
+            body: JSON.stringify({ 'googleAuthCode': googleAuthCode }),
             headers: { 'Content-Type': 'application/json' }
         }
     );
