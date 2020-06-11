@@ -1,8 +1,16 @@
 # userme-demo-ui
 Example application that uses Userme for account operations (registration, password reset, social login etc) and a separate container for backend for APIs.
 
-Backend services for this demo is at http://github.com/stutzlab/userme-demo-api
+### New Account with local password
+<img src="docs/userme-new-account.gif" width="360" />
 
+### Facebook signin support
+<img src="docs/userme-facebook.gif" width="360" />
+
+### Google signin support
+<img src="docs/userme-google.gif" width="360" />
+
+Backend services for this demo is at http://github.com/stutzlab/userme-demo-api
 See more at http://github.com/stutzlab/userme
 
 ## Usage

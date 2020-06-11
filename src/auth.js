@@ -87,6 +87,7 @@ function keepTokenRefreshed() {
         return
     }
     const diff = Date.parse(t.accessTokenExpiration) - new Date().getTime()
+    // const diff = 120000 + 10000
     console.log("Next token refresh scheduled in " + (diff-120000) + "ms")
     window.setTimeout(doRefresh, Math.max(diff-120000, 0))
 }
@@ -101,6 +102,7 @@ async function doRefresh() {
 
     const t = getToken()
     const diff = Date.parse(t.accessTokenExpiration) - new Date().getTime()
+    // const diff = 120000 + 10000
     console.log("Next token refresh scheduled in " + (diff-120000) + "ms")
     window.setTimeout(doRefresh, Math.max(diff-120000, 0))
 }
